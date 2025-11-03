@@ -10,7 +10,7 @@ const date = reactive({
   month: dateCurrent.getMonth(),
   day: dateCurrent.getDate()
 })
-const lang = ref('En')
+const lang = ref('Ru')
 const weekDaysEn = ref(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sut'])
 const weekDaysRu = ref(['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'])
 
@@ -20,10 +20,10 @@ const emit = defineEmits(['getDate', 'date'])
 onMounted(() => {
   if (props.date) setDate()
   year.value = dateCurrent.getFullYear()
-  if (lang.value === 'En') {
+  if (lang.value === 'Ru') {
     month.value = dateCurrent.toLocaleString('en-US', { month: 'short' });
   }
-  if (lang.value === 'Ru') {
+  if (lang.value === 'En') {
     month.value = dateCurrent.toLocaleString('ru-RU', { month: 'short' });
   }
   weekDays()
@@ -31,20 +31,20 @@ onMounted(() => {
 
 function prevMonth() {
   dateCurrent.setMonth(dateCurrent.getMonth() - 1);
-  if (lang.value === 'En') {
+  if (lang.value === 'Ru') {
     month.value = dateCurrent.toLocaleString('en-US', { month: 'short' });
   }
-  if (lang.value === 'Ru') {
+  if (lang.value === 'En') {
     month.value = dateCurrent.toLocaleString('ru-RU', { month: 'short' });
   }
 }
 
 function nextMonth() {
   dateCurrent.setMonth(dateCurrent.getMonth() + 1);
-  if (lang.value === 'En') {
+  if (lang.value === 'Ru') {
     month.value = dateCurrent.toLocaleString('en-US', { month: 'short' });
   }
-  if (lang.value === 'Ru') {
+  if (lang.value === 'En') {
     month.value = dateCurrent.toLocaleString('ru-RU', { month: 'short' });
   }
 }
@@ -127,10 +127,10 @@ function toggleLang() {
 
 watch(lang, (newLang) => {
   if (newLang === 'En') {
-    month.value = dateCurrent.toLocaleString('en-US', { month: 'short' });
+    month.value = dateCurrent.toLocaleString('ru-RU', { month: 'short' });
   }
   if (newLang === 'Ru') {
-    month.value = dateCurrent.toLocaleString('ru-RU', { month: 'short' });
+    month.value = dateCurrent.toLocaleString('en-US', { month: 'short' });
   }
 })
 
@@ -159,13 +159,13 @@ watch(lang, (newLang) => {
       </div>
     </div>
 
-    <div v-if="lang === 'En'" class="week">
+    <div v-if="lang === 'Ru'" class="week">
       <span v-for="day in weekDaysEn">
         {{ day }}
       </span>
     </div>
 
-    <div v-if="lang === 'Ru'" class="week">
+    <div v-if="lang === 'En'" class="week">
       <span v-for="day in weekDaysRu">
         {{ day }}
       </span>
