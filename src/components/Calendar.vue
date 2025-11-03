@@ -12,6 +12,8 @@ const date = reactive({
 })
 
 const props = defineProps(['date'])
+const emit = defineEmits(['getDate', 'date'])
+
 
 onMounted(() => {
   if (props.date) setDate()
@@ -58,17 +60,17 @@ function weekDays() {
   }
   if (dateCurrent.getFullYear() === date.year && dateCurrent.getMonth() === date.month) {
     toggleActive(date.day - 1)
-  } else {
-    // toggleActive(null)
   }
 }
 
 function getDate(day, index) {
-  date.value = year.value + ' ' + month.value + ' ' + day.number;
 
   dateCurrent.setDate(day.number)
 
   toggleActive(index)
+
+  emit('getDate', date.year + '-' + dateCurrent.getMonth() + '-' + date.day)
+
 }
 
 function setDate(y, m, d) {
@@ -105,87 +107,70 @@ function toggleActive(index) {
 </script>
 
 <template>
-  <h1>
-    Calendar
-  </h1>
 
-  <div class="wrapper">
+  <div class="calendar">
 
-
-    <div class="calendar">
-
-      <div class="months">
-        <div @click="prevMonth" class="arrow">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-            stroke="currentColor" class="size-6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18" />
-          </svg>
-        </div>
-        <p>
-          {{ month }} {{ year }}
-        </p>
-        <div @click="nextMonth" class="arrow arrow_right">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-            stroke="currentColor" class="size-6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
-          </svg>
-
-        </div>
+    <div class="months">
+      <div @click="prevMonth" class="arrow">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+          class="size-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18" />
+        </svg>
       </div>
+      <p>
+        {{ month }} {{ year }}
+      </p>
+      <div @click="nextMonth" class="arrow arrow_right">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+          class="size-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
+        </svg>
 
-      <div class="week">
-        <span>Sun</span>
-        <span>Mon</span>
-        <span>Tue</span>
-        <span>Wed</span>
-        <span>Thu</span>
-        <span>Fri</span>
-        <span>Sut</span>
       </div>
-
-      <div class="days">
-        <div @click="getDate(day, index)" v-for="(day, index) in days" :data-col="day.week"
-          :class="[day.isActive ? 'day active' : 'day']">
-          <span v-if="day.week === 0">
-            {{ day.number }}
-          </span>
-          <span v-if="day.week === 1">
-            {{ day.number }}
-          </span>
-          <span v-if="day.week === 2">
-            {{ day.number }}
-          </span>
-          <span v-if="day.week === 3">
-            {{ day.number }}
-          </span>
-          <span v-if="day.week === 4">
-            {{ day.number }}
-          </span>
-          <span v-if="day.week === 5">
-            {{ day.number }}
-          </span>
-          <span v-if="day.week === 6">
-            {{ day.number }}
-          </span>
-        </div>
-      </div>
-
     </div>
 
-    <p class="date">
-      {{ date.year }}-{{ date.month + 1 }}-{{ date.day }}
-    </p>
+    <div class="week">
+      <span>Sun</span>
+      <span>Mon</span>
+      <span>Tue</span>
+      <span>Wed</span>
+      <span>Thu</span>
+      <span>Fri</span>
+      <span>Sut</span>
+    </div>
+
+    <div class="days">
+      <div @click="getDate(day, index)" v-for="(day, index) in days" :data-col="day.week"
+        :class="[day.isActive ? 'day active' : 'day']">
+        <span v-if="day.week === 0">
+          {{ day.number }}
+        </span>
+        <span v-if="day.week === 1">
+          {{ day.number }}
+        </span>
+        <span v-if="day.week === 2">
+          {{ day.number }}
+        </span>
+        <span v-if="day.week === 3">
+          {{ day.number }}
+        </span>
+        <span v-if="day.week === 4">
+          {{ day.number }}
+        </span>
+        <span v-if="day.week === 5">
+          {{ day.number }}
+        </span>
+        <span v-if="day.week === 6">
+          {{ day.number }}
+        </span>
+      </div>
+    </div>
 
   </div>
 
 </template>
 
 <style scoped>
-.wrapper {
-  display: flex;
-  gap: 1rem;
-}
-
 .months {
   display: flex;
   align-items: center;
