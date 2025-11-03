@@ -11,8 +11,10 @@ const date = reactive({
   day: dateCurrent.getDate()
 })
 
+const props = defineProps(['date'])
+
 onMounted(() => {
-  setDate(2020, 10, 8)
+  if (props.date) setDate()
   year.value = dateCurrent.getFullYear()
   month.value = dateCurrent.toLocaleString('en-US', { month: 'short' });
   weekDays()
@@ -70,23 +72,25 @@ function getDate(day, index) {
 }
 
 function setDate(y, m, d) {
-  if (y && m && d) {
-    dateCurrent.setFullYear(y)
-    dateCurrent.setMonth(m - 1)
-    dateCurrent.setDate(d)
+  const arr = props.date.split('-')
+  y = arr[0]
+  m = arr[1]
+  d = arr[2]
 
-    date.year = dateCurrent.getFullYear()
-    date.month = dateCurrent.getMonth()
-    date.day = dateCurrent.getDate()
-  } else {
-    return
-  }
+  dateCurrent.setFullYear(y)
+  dateCurrent.setMonth(m - 1)
+  dateCurrent.setDate(d)
+
+  date.year = dateCurrent.getFullYear()
+  date.month = dateCurrent.getMonth()
+  date.day = dateCurrent.getDate()
+
 }
 
 function toggleActive(index) {
   date.year = dateCurrent.getFullYear()
   date.month = dateCurrent.getMonth()
-  date.day = index +  1
+  date.day = index + 1
   days.value = days.value.map((d) => {
     if (d.isActive) {
       d.isActive = false
@@ -168,7 +172,7 @@ function toggleActive(index) {
 
     </div>
 
-    <p>
+    <p class="date">
       {{ date.year }}-{{ date.month + 1 }}-{{ date.day }}
     </p>
 
@@ -198,7 +202,12 @@ function toggleActive(index) {
   cursor: pointer;
 }
 
-p {
+.date {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 56px;
+  min-width: 160px;
   margin: 0;
 }
 
