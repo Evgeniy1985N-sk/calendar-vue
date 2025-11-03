@@ -1,93 +1,74 @@
 <script setup>
-import { onMounted, reactive, ref, watch, watchEffect, } from 'vue'
+import { onMounted, reactive, ref, watch, } from 'vue'
 
-const dateCurrent = new Date()
+const dateCurrent = ref(new Date())
 const year = ref('')
 const month = ref('')
 const days = ref([])
 const date = reactive({
-  year: dateCurrent.getFullYear(),
-  month: dateCurrent.getMonth(),
-  day: dateCurrent.getDate()
+  year: dateCurrent.value.getFullYear(),
+  month: dateCurrent.value.getMonth(),
+  day: dateCurrent.value.getDate()
 })
-const lang = ref('Ru')
-const weekDaysEn = ref(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sut'])
+const lang = ref('En')
+const weekDaysEn = ref(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'])
 const weekDaysRu = ref(['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'])
 
 const props = defineProps(['date'])
-const emit = defineEmits(['getDate', 'date'])
 
 onMounted(() => {
   if (props.date) setDate()
-  year.value = dateCurrent.getFullYear()
-  if (lang.value === 'Ru') {
-    month.value = dateCurrent.toLocaleString('en-US', { month: 'short' });
-  }
-  if (lang.value === 'En') {
-    month.value = dateCurrent.toLocaleString('ru-RU', { month: 'short' });
-  }
+  year.value = dateCurrent.value.getFullYear()
+  toggleLang()
   weekDays()
 })
 
 function prevMonth() {
-  dateCurrent.setMonth(dateCurrent.getMonth() - 1);
-  if (lang.value === 'Ru') {
-    month.value = dateCurrent.toLocaleString('en-US', { month: 'short' });
-  }
-  if (lang.value === 'En') {
-    month.value = dateCurrent.toLocaleString('ru-RU', { month: 'short' });
-  }
+  dateCurrent.value.setMonth(dateCurrent.value.getMonth() - 1);
+  toggleLang()
 }
 
 function nextMonth() {
-  dateCurrent.setMonth(dateCurrent.getMonth() + 1);
-  if (lang.value === 'Ru') {
-    month.value = dateCurrent.toLocaleString('en-US', { month: 'short' });
-  }
-  if (lang.value === 'En') {
-    month.value = dateCurrent.toLocaleString('ru-RU', { month: 'short' });
-  }
+  dateCurrent.value.setMonth(dateCurrent.value.getMonth() + 1);
+  toggleLang()
 }
 
 watch(month, (newMonth, oldMonth) => {
   if (newMonth === 'Dec' && oldMonth === 'Jan' || newMonth === 'дек.' && oldMonth === 'янв.') {
-    year.value = dateCurrent.getFullYear()
+    year.value = dateCurrent.value.getFullYear()
   }
 
   if (newMonth === 'Jan' && oldMonth === 'Dec' || newMonth === 'янв.' && oldMonth === 'дек.') {
-    year.value = dateCurrent.getFullYear()
+    year.value = dateCurrent.value.getFullYear()
   }
 
   weekDays()
 })
 
 function allDays() {
-  return new Date(dateCurrent.getFullYear(), dateCurrent.getMonth() + 1, 0).getDate();
+  return new Date(dateCurrent.value.getFullYear(), dateCurrent.value.getMonth() + 1, 0).getDate();
 }
 
 function weekDays() {
   days.value = []
   for (let i = 1; i <= allDays(); i++) {
-    let day = new Date(dateCurrent.getFullYear(), dateCurrent.getMonth(), i).getDay();
+    let day = new Date(dateCurrent.value.getFullYear(), dateCurrent.value.getMonth(), i).getDay();
     days.value.push({
       number: i,
       week: day,
       isActive: false,
     })
   }
-  if (dateCurrent.getFullYear() === date.year && dateCurrent.getMonth() === date.month) {
+  if (dateCurrent.value.getFullYear() === date.year && dateCurrent.value.getMonth() === date.month) {
     toggleActive(date.day - 1)
   }
 }
 
 function getDate(day, index) {
 
-  dateCurrent.setDate(day.number)
+  dateCurrent.value.setDate(day.number)
 
   toggleActive(index)
-
-  emit('getDate', date.year + '-' + dateCurrent.getMonth() + '-' + date.day)
-
 }
 
 function setDate(y, m, d) {
@@ -96,19 +77,18 @@ function setDate(y, m, d) {
   m = arr[1]
   d = arr[2]
 
-  dateCurrent.setFullYear(y)
-  dateCurrent.setMonth(m - 1)
-  dateCurrent.setDate(d)
+  dateCurrent.value.setFullYear(y)
+  dateCurrent.value.setMonth(m - 1)
+  dateCurrent.value.setDate(d)
 
-  date.year = dateCurrent.getFullYear()
-  date.month = dateCurrent.getMonth()
-  date.day = dateCurrent.getDate()
-
+  date.year = dateCurrent.value.getFullYear()
+  date.month = dateCurrent.value.getMonth()
+  date.day = dateCurrent.value.getDate()
 }
 
 function toggleActive(index) {
-  date.year = dateCurrent.getFullYear()
-  date.month = dateCurrent.getMonth()
+  date.year = dateCurrent.value.getFullYear()
+  date.month = dateCurrent.value.getMonth()
   date.day = index + 1
   days.value = days.value.map((d) => {
     if (d.isActive) {
@@ -121,90 +101,105 @@ function toggleActive(index) {
   })
 }
 
-function toggleLang() {
+function toggleLangButton() {
   lang.value = lang.value === 'En' ? 'Ru' : 'En'
 }
 
-watch(lang, (newLang) => {
-  if (newLang === 'En') {
-    month.value = dateCurrent.toLocaleString('ru-RU', { month: 'short' });
-  }
-  if (newLang === 'Ru') {
-    month.value = dateCurrent.toLocaleString('en-US', { month: 'short' });
-  }
-})
+watch(lang, toggleLang)
+
+function toggleLang() {
+  return month.value = dateCurrent.value.toLocaleString(lang.value === 'En' ? 'En' : 'Ru', { month: 'short' });
+}
 
 </script>
 
 <template>
+  <div class="wrapper">
+    <div class="calendar">
 
-  <div class="calendar">
+      <div class="months">
+        <div @click="prevMonth" class="arrow">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18" />
+          </svg>
+        </div>
+        <p>
+          {{ month }} {{ year }}
+        </p>
+        <div @click="nextMonth" class="arrow arrow_right">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
+          </svg>
 
-    <div class="months">
-      <div @click="prevMonth" class="arrow">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-          class="size-6">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18" />
-        </svg>
+        </div>
       </div>
-      <p>
-        {{ month }} {{ year }}
-      </p>
-      <div @click="nextMonth" class="arrow arrow_right">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-          class="size-6">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
-        </svg>
 
-      </div>
-    </div>
-
-    <div v-if="lang === 'Ru'" class="week">
-      <span v-for="day in weekDaysEn">
-        {{ day }}
-      </span>
-    </div>
-
-    <div v-if="lang === 'En'" class="week">
-      <span v-for="day in weekDaysRu">
-        {{ day }}
-      </span>
-    </div>
-
-    <div class="days">
-      <div @click="getDate(day, index)" v-for="(day, index) in days" :data-col="day.week"
-        :class="[day.isActive ? 'day active' : 'day']">
-        <span v-if="day.week === 0">
-          {{ day.number }}
-        </span>
-        <span v-if="day.week === 1">
-          {{ day.number }}
-        </span>
-        <span v-if="day.week === 2">
-          {{ day.number }}
-        </span>
-        <span v-if="day.week === 3">
-          {{ day.number }}
-        </span>
-        <span v-if="day.week === 4">
-          {{ day.number }}
-        </span>
-        <span v-if="day.week === 5">
-          {{ day.number }}
-        </span>
-        <span v-if="day.week === 6">
-          {{ day.number }}
+      <div v-if="lang === 'En'" class="week">
+        <span v-for="day in weekDaysEn">
+          {{ day }}
         </span>
       </div>
+
+      <div v-if="lang === 'Ru'" class="week">
+        <span v-for="day in weekDaysRu">
+          {{ day }}
+        </span>
+      </div>
+
+      <div class="days">
+        <div @click="getDate(day, index)" v-for="(day, index) in days" :data-col="day.week"
+          :class="[day.isActive ? 'day active' : 'day']">
+          <span v-if="day.week === 0">
+            {{ day.number }}
+          </span>
+          <span v-if="day.week === 1">
+            {{ day.number }}
+          </span>
+          <span v-if="day.week === 2">
+            {{ day.number }}
+          </span>
+          <span v-if="day.week === 3">
+            {{ day.number }}
+          </span>
+          <span v-if="day.week === 4">
+            {{ day.number }}
+          </span>
+          <span v-if="day.week === 5">
+            {{ day.number }}
+          </span>
+          <span v-if="day.week === 6">
+            {{ day.number }}
+          </span>
+        </div>
+      </div>
+
+      <button @click="toggleLangButton">{{ lang }}</button>
+
     </div>
-
-    <button @click="toggleLang">{{ lang }}</button>
-
+    <p class="date">
+      {{ date.year }}-{{ date.month + 1 }}-{{ date.day }}
+    </p>
   </div>
 
 </template>
 
 <style scoped>
+.wrapper {
+  display: flex;
+  gap: 1rem;
+}
+
+.date {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 56px;
+  min-width: 160px;
+  margin: 0;
+}
+
 .months {
   display: flex;
   align-items: center;
