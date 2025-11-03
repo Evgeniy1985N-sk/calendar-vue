@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, reactive, ref, watch, } from 'vue'
+import { onMounted, reactive, ref, watch, watchEffect, } from 'vue'
 
 const dateCurrent = new Date()
 const year = ref('')
@@ -10,34 +10,51 @@ const date = reactive({
   month: dateCurrent.getMonth(),
   day: dateCurrent.getDate()
 })
+const lang = ref('En')
+const weekDaysEn = ref(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sut'])
+const weekDaysRu = ref(['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'])
 
 const props = defineProps(['date'])
 const emit = defineEmits(['getDate', 'date'])
 
-
 onMounted(() => {
   if (props.date) setDate()
   year.value = dateCurrent.getFullYear()
-  month.value = dateCurrent.toLocaleString('en-US', { month: 'short' });
+  if (lang.value === 'En') {
+    month.value = dateCurrent.toLocaleString('en-US', { month: 'short' });
+  }
+  if (lang.value === 'Ru') {
+    month.value = dateCurrent.toLocaleString('ru-RU', { month: 'short' });
+  }
   weekDays()
 })
 
 function prevMonth() {
   dateCurrent.setMonth(dateCurrent.getMonth() - 1);
-  month.value = dateCurrent.toLocaleString('en-US', { month: 'short' });
+  if (lang.value === 'En') {
+    month.value = dateCurrent.toLocaleString('en-US', { month: 'short' });
+  }
+  if (lang.value === 'Ru') {
+    month.value = dateCurrent.toLocaleString('ru-RU', { month: 'short' });
+  }
 }
 
 function nextMonth() {
   dateCurrent.setMonth(dateCurrent.getMonth() + 1);
-  month.value = dateCurrent.toLocaleString('en-US', { month: 'short' });
+  if (lang.value === 'En') {
+    month.value = dateCurrent.toLocaleString('en-US', { month: 'short' });
+  }
+  if (lang.value === 'Ru') {
+    month.value = dateCurrent.toLocaleString('ru-RU', { month: 'short' });
+  }
 }
 
 watch(month, (newMonth, oldMonth) => {
-  if (newMonth === 'Dec' && oldMonth === 'Jan') {
+  if (newMonth === 'Dec' && oldMonth === 'Jan' || newMonth === 'дек.' && oldMonth === 'янв.') {
     year.value = dateCurrent.getFullYear()
   }
 
-  if (newMonth === 'Jan' && oldMonth === 'Dec') {
+  if (newMonth === 'Jan' && oldMonth === 'Dec' || newMonth === 'янв.' && oldMonth === 'дек.') {
     year.value = dateCurrent.getFullYear()
   }
 
@@ -104,6 +121,19 @@ function toggleActive(index) {
   })
 }
 
+function toggleLang() {
+  lang.value = lang.value === 'En' ? 'Ru' : 'En'
+}
+
+watch(lang, (newLang) => {
+  if (newLang === 'En') {
+    month.value = dateCurrent.toLocaleString('en-US', { month: 'short' });
+  }
+  if (newLang === 'Ru') {
+    month.value = dateCurrent.toLocaleString('ru-RU', { month: 'short' });
+  }
+})
+
 </script>
 
 <template>
@@ -129,14 +159,16 @@ function toggleActive(index) {
       </div>
     </div>
 
-    <div class="week">
-      <span>Sun</span>
-      <span>Mon</span>
-      <span>Tue</span>
-      <span>Wed</span>
-      <span>Thu</span>
-      <span>Fri</span>
-      <span>Sut</span>
+    <div v-if="lang === 'En'" class="week">
+      <span v-for="day in weekDaysEn">
+        {{ day }}
+      </span>
+    </div>
+
+    <div v-if="lang === 'Ru'" class="week">
+      <span v-for="day in weekDaysRu">
+        {{ day }}
+      </span>
     </div>
 
     <div class="days">
@@ -165,6 +197,8 @@ function toggleActive(index) {
         </span>
       </div>
     </div>
+
+    <button @click="toggleLang">{{ lang }}</button>
 
   </div>
 
@@ -207,6 +241,7 @@ function toggleActive(index) {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: .8rem;
+  margin-bottom: 1rem;
 }
 
 .day.active {

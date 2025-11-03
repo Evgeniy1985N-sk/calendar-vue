@@ -13,7 +13,7 @@ function getDate(date) {
 
 <template>
   <div class="wrapper">
-    <Calendar @get-date="getDate" />
+    <Calendar @get-date="getDate" date="1985-8-7" />
     <p class="date">
       {{ dateCurrent }}
     </p>
