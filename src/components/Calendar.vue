@@ -13,6 +13,7 @@ const date = reactive({
 const lang = ref('En')
 const weekDaysEn = ref(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'])
 const weekDaysRu = ref(['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'])
+const monthCounter = ref(null)
 
 const props = defineProps(['date'])
 
@@ -21,24 +22,29 @@ onMounted(() => {
   year.value = dateCurrent.value.getFullYear()
   changeMonth()
   weekDays()
+  monthCounter.value = dateCurrent.value.getMonth()
 })
 
 function prevMonth() {
   dateCurrent.value.setMonth(dateCurrent.value.getMonth() - 1);
   changeMonth()
+  monthCounter.value = dateCurrent.value.getMonth()
 }
 
 function nextMonth() {
   dateCurrent.value.setMonth(dateCurrent.value.getMonth() + 1);
   changeMonth()
+  monthCounter.value = dateCurrent.value.getMonth()
 }
 
-watch(month, (newMonth, oldMonth) => {
-  if (newMonth === 'Dec' && oldMonth === 'Jan' || newMonth === 'дек.' && oldMonth === 'янв.') {
+watch(monthCounter, (newCounter, oldCounter) => {
+  if(oldCounter === null) return
+
+  if (newCounter === 11 && oldCounter === 0) {
     year.value = dateCurrent.value.getFullYear()
   }
 
-  if (newMonth === 'Jan' && oldMonth === 'Dec' || newMonth === 'янв.' && oldMonth === 'дек.') {
+  if (newCounter === 0 && oldCounter === 11) {
     year.value = dateCurrent.value.getFullYear()
   }
 
@@ -108,7 +114,7 @@ function toggleLangButton() {
 watch(lang, changeMonth)
 
 function changeMonth() {
-  return month.value = dateCurrent.value.toLocaleString(lang.value === 'En' ? 'En' : 'Ru', { month: 'short' });
+  month.value = dateCurrent.value.toLocaleString(lang.value === 'En' ? 'En' : 'Ru', { month: 'short' });
 }
 
 </script>
