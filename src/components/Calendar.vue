@@ -19,37 +19,36 @@ const props = defineProps(['date'])
 
 onMounted(() => {
   if (props.date) setDate()
-  year.value = dateCurrent.value.getFullYear()
-  changeMonth()
+  updateYear()
+  updateMonth()
   weekDays()
-  monthCounter.value = dateCurrent.value.getMonth()
 })
 
 function prevMonth() {
   dateCurrent.value.setMonth(dateCurrent.value.getMonth() - 1);
-  changeMonth()
-  monthCounter.value = dateCurrent.value.getMonth()
+  updateMonth()
 }
 
 function nextMonth() {
   dateCurrent.value.setMonth(dateCurrent.value.getMonth() + 1);
-  changeMonth()
-  monthCounter.value = dateCurrent.value.getMonth()
+  updateMonth()
 }
 
 watch(monthCounter, (newCounter, oldCounter) => {
-  if(oldCounter === null) return
+  if (oldCounter === null) return
 
   if (newCounter === 11 && oldCounter === 0) {
-    year.value = dateCurrent.value.getFullYear()
+    updateYear()
   }
 
   if (newCounter === 0 && oldCounter === 11) {
-    year.value = dateCurrent.value.getFullYear()
+    updateYear()
   }
 
   weekDays()
 })
+
+watch(lang, updateMonth)
 
 function allDays() {
   return new Date(dateCurrent.value.getFullYear(), dateCurrent.value.getMonth() + 1, 0).getDate();
@@ -111,10 +110,13 @@ function toggleLangButton() {
   lang.value = lang.value === 'En' ? 'Ru' : 'En'
 }
 
-watch(lang, changeMonth)
-
-function changeMonth() {
+function updateMonth() {
   month.value = dateCurrent.value.toLocaleString(lang.value === 'En' ? 'En' : 'Ru', { month: 'short' });
+  monthCounter.value = dateCurrent.value.getMonth()
+}
+
+function updateYear() {
+  year.value = dateCurrent.value.getFullYear()
 }
 
 </script>
