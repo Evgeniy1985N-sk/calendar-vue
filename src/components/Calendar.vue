@@ -18,7 +18,7 @@ const monthCounter = ref(null)
 const props = defineProps(['date'])
 
 onMounted(() => {
-  if (props.date) selectedDate()
+  if (props.date) propsDate()
   updateYear()
   updateMonth()
   weekDays()
@@ -76,7 +76,7 @@ function updateDate(day, index) {
   toggleActive(index)
 }
 
-function selectedDate(y, m, d) {
+function propsDate(y, m, d) {
   const arr = props.date.split('-')
   y = arr[0]
   m = arr[1]
