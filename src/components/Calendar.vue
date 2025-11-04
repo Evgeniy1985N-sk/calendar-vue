@@ -19,18 +19,18 @@ const props = defineProps(['date'])
 onMounted(() => {
   if (props.date) setDate()
   year.value = dateCurrent.value.getFullYear()
-  toggleLang()
+  changeMonth()
   weekDays()
 })
 
 function prevMonth() {
   dateCurrent.value.setMonth(dateCurrent.value.getMonth() - 1);
-  toggleLang()
+  changeMonth()
 }
 
 function nextMonth() {
   dateCurrent.value.setMonth(dateCurrent.value.getMonth() + 1);
-  toggleLang()
+  changeMonth()
 }
 
 watch(month, (newMonth, oldMonth) => {
@@ -105,9 +105,9 @@ function toggleLangButton() {
   lang.value = lang.value === 'En' ? 'Ru' : 'En'
 }
 
-watch(lang, toggleLang)
+watch(lang, changeMonth)
 
-function toggleLang() {
+function changeMonth() {
   return month.value = dateCurrent.value.toLocaleString(lang.value === 'En' ? 'En' : 'Ru', { month: 'short' });
 }
 
