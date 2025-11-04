@@ -18,7 +18,7 @@ const monthCounter = ref(null)
 const props = defineProps(['date'])
 
 onMounted(() => {
-  if (props.date) setDate()
+  if (props.date) selectedDate()
   updateYear()
   updateMonth()
   weekDays()
@@ -69,14 +69,14 @@ function weekDays() {
   }
 }
 
-function getDate(day, index) {
+function updateDate(day, index) {
 
   dateCurrent.value.setDate(day.number)
 
   toggleActive(index)
 }
 
-function setDate(y, m, d) {
+function selectedDate(y, m, d) {
   const arr = props.date.split('-')
   y = arr[0]
   m = arr[1]
@@ -157,7 +157,7 @@ function updateYear() {
       </div>
 
       <div class="days">
-        <div @click="getDate(day, index)" v-for="(day, index) in days" :data-col="day.week"
+        <div @click="updateDate(day, index)" v-for="(day, index) in days" :data-col="day.week"
           :class="[day.isActive ? 'day active' : 'day']">
           <span v-if="day.week === 0">
             {{ day.number }}
