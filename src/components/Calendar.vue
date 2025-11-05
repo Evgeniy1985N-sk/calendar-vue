@@ -76,11 +76,9 @@ function updateDate(day, index) {
   toggleActive(index)
 }
 
-function propsDate(y, m, d) {
-  const arr = props.date.split('-')
-  y = arr[0]
-  m = arr[1]
-  d = arr[2]
+function propsDate() {
+  const dateCustom = props.date.split('-')
+  const [y, m, d] = dateCustom
 
   dateCurrent.value.setFullYear(y)
   dateCurrent.value.setMonth(m - 1)
