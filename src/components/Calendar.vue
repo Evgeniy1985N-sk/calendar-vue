@@ -185,7 +185,7 @@ function updateYear() {
 
     </div>
     <p class="date">
-      {{ date.year }}-{{ date.month + 1 }}-{{ date.day }}
+      {{ date.year }}-{{ date.month + 1 < 10 ? '0' + (date.month + 1) : date.month + 1 }}-{{ date.day < 10 ? '0' + date.day : date.day}}
     </p>
   </div>
 
