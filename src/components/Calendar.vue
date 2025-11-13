@@ -1,10 +1,20 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, reactive, ref, watch, } from 'vue'
 
+interface Day {
+  number: number
+  week: number
+  isActive: boolean
+}
+
+interface Props {
+  date: string
+}
+
 const dateCurrent = ref(new Date())
-const year = ref('')
+const year = ref<number | null>(null)
 const month = ref('')
-const days = ref([])
+const days = ref<Day[]>([])
 const date = reactive({
   year: dateCurrent.value.getFullYear(),
   month: dateCurrent.value.getMonth(),
@@ -13,9 +23,9 @@ const date = reactive({
 const lang = ref('En')
 const weekDaysEn = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 const weekDaysRu = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб']
-const monthCounter = ref(null)
+const monthCounter = ref<number | null>(null)
 
-const props = defineProps(['date'])
+const props = defineProps<Props>()
 
 onMounted(() => {
   if (props.date) propsDate()
@@ -69,7 +79,7 @@ function weekDays() {
   }
 }
 
-function updateDate(day, index) {
+function updateDate(day: Day, index: number) {
 
   dateCurrent.value.setDate(day.number)
 
@@ -80,16 +90,16 @@ function propsDate() {
   const dateCustom = props.date.split('-')
   const [y, m, d] = dateCustom
 
-  dateCurrent.value.setFullYear(y)
-  dateCurrent.value.setMonth(m - 1)
-  dateCurrent.value.setDate(d)
+  dateCurrent.value.setFullYear(+y)
+  dateCurrent.value.setMonth(+m - 1)
+  dateCurrent.value.setDate(+d)
 
   date.year = dateCurrent.value.getFullYear()
   date.month = dateCurrent.value.getMonth()
   date.day = dateCurrent.value.getDate()
 }
 
-function toggleActive(index) {
+function toggleActive(index: number) {
   date.year = dateCurrent.value.getFullYear()
   date.month = dateCurrent.value.getMonth()
   date.day = index + 1
