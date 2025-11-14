@@ -167,27 +167,11 @@ function updateYear() {
       <div class="days">
         <div @click="updateDate(day, index)" v-for="(day, index) in days" :data-col="day.week"
           :class="[day.isActive ? 'day active' : 'day']">
-          <span v-if="day.week === 0">
+
+          <span>
             {{ day.number }}
           </span>
-          <span v-if="day.week === 1">
-            {{ day.number }}
-          </span>
-          <span v-if="day.week === 2">
-            {{ day.number }}
-          </span>
-          <span v-if="day.week === 3">
-            {{ day.number }}
-          </span>
-          <span v-if="day.week === 4">
-            {{ day.number }}
-          </span>
-          <span v-if="day.week === 5">
-            {{ day.number }}
-          </span>
-          <span v-if="day.week === 6">
-            {{ day.number }}
-          </span>
+
         </div>
       </div>
 
